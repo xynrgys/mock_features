@@ -1,0 +1,36 @@
+// Database Schema (Prisma)
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  name        String
+  skills      Skill[]
+  endorsements Endorsement[]
+}
+
+model Skill {
+  id           Int           @id @default(autoincrement())
+  name         String
+  createdAt    DateTime      @default(now())
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id])
+  endorsements Endorsement[]
+}
+
+model Endorsement {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  skillId    Int
+  endorserId Int
+  skill      Skill    @relation(fields: [skillId], references: [id])
+  endorser   User     @relation(fields: [endorserId], references: [id])
+}
